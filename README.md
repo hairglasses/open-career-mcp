@@ -38,7 +38,6 @@ See [PUBLIC_BOUNDARY.md](PUBLIC_BOUNDARY.md) before adding examples or fixtures.
 ## Verification
 
 ```bash
-go test ./...
-go vet ./...
+make ci
 gitleaks detect --source . --no-git --redact
 ```

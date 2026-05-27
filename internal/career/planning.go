@@ -31,7 +31,7 @@ func BuildInterviewPacket(resume Resume, opportunity Opportunity) InterviewPacke
 	talkingPoints := []string{
 		fmt.Sprintf("Explain how %s maps to %s.", resume.Headline, opportunity.Role),
 		"Describe safe execution boundaries before describing automation depth.",
-		"Use synthetic examples and avoid private workspace, tenant, or account details.",
+		"Use synthetic examples and avoid private workspace or account-specific details.",
 	}
 	for _, signal := range opportunity.Signals {
 		talkingPoints = append(talkingPoints, signal)

@@ -24,4 +24,5 @@
 - Run full secret scan and history review.
 - Add CI and community files. Done for private staging; CI remains manual-only
   until public release review.
+- Add one-command local release gate. Done with `make ci`.
 - Switch visibility only after the public boundary is reviewed.

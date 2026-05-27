@@ -16,6 +16,6 @@ until every fixture, example, and commit is safe for public release.
 
 ## Verification
 
-- Run `gitleaks detect --source . --no-git --redact` before any visibility
-  change.
+- Run `make ci` before committing meaningful changes.
+- Run `gitleaks detect --source . --redact` before any visibility change.
 - Keep README, examples, and fixtures aligned with `PUBLIC_BOUNDARY.md`.

@@ -25,7 +25,7 @@ private staging until the public boundary is proven by tests and scans.
 Before public visibility:
 
 ```bash
-go test ./...
+make ci
 gitleaks detect --source . --no-git --redact
 ```
 
