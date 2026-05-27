@@ -1,0 +1,44 @@
+[
+  {
+    "synthetic": true,
+    "id": "syn-001",
+    "company": "Northstar Tools",
+    "role": "Staff Engineer, Agent Infrastructure",
+    "location": "Remote",
+    "work_mode": "remote",
+    "stage": "research",
+    "tags": ["go", "mcp", "platform", "agents"],
+    "description": "Build local-first infrastructure for AI agent workflows, tool governance, and production observability.",
+    "requirements": [
+      "Go control-plane experience",
+      "Distributed systems design",
+      "Policy and approval gates",
+      "Operational telemetry"
+    ],
+    "signals": [
+      "Strong match for MCP and agent-infrastructure work",
+      "Good place to discuss safe execution boundaries"
+    ]
+  },
+  {
+    "synthetic": true,
+    "id": "syn-002",
+    "company": "Cedar Analytics",
+    "role": "Principal Platform Engineer",
+    "location": "San Francisco, CA",
+    "work_mode": "hybrid",
+    "stage": "screen",
+    "tags": ["kubernetes", "observability", "developer-tooling"],
+    "description": "Lead platform reliability work for data teams using Kubernetes, service contracts, and developer tooling.",
+    "requirements": [
+      "Kubernetes operations",
+      "Incident response",
+      "Observability architecture",
+      "Developer experience leadership"
+    ],
+    "signals": [
+      "Strong platform-leadership story",
+      "Use private systems only as architecture-level interview evidence"
+    ]
+  }
+]

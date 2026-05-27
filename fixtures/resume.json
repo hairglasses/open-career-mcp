@@ -1,0 +1,26 @@
+{
+  "synthetic": true,
+  "candidate": "Avery Example",
+  "headline": "Staff platform engineer focused on agent infrastructure",
+  "skills": [
+    "Go",
+    "Model Context Protocol",
+    "Kubernetes",
+    "Distributed systems",
+    "Observability",
+    "Policy gates",
+    "Developer tooling"
+  ],
+  "projects": [
+    {
+      "name": "Agent Control Plane",
+      "summary": "Built synthetic provider-routing, launch-plan, and review-gate workflows for long-running agent tasks.",
+      "skills": ["Go", "Model Context Protocol", "Policy gates", "Developer tooling"]
+    },
+    {
+      "name": "Fleet Baseline Guard",
+      "summary": "Created synthetic repo hygiene checks for config parity, skill mirrors, and local validation gates.",
+      "skills": ["Go", "Observability", "Developer tooling"]
+    }
+  ]
+}

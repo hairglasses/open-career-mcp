@@ -1,0 +1,22 @@
+name: ci
+
+# This private staging repo keeps CI manual-only until the release boundary is
+# reviewed. Enable push and pull_request triggers when the repo becomes public.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-go@v6
+        with:
+          go-version-file: go.mod
+          cache: true
+      - run: go test ./...
+      - run: go vet ./...

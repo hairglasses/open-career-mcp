@@ -25,7 +25,8 @@ private staging until the public boundary is proven by tests and scans.
 Before public visibility:
 
 ```bash
+go test ./...
 gitleaks detect --source . --no-git --redact
 ```
 
-The first public release also needs synthetic fixture tests and CI.
+The first public release also needs CI and a full history review.
