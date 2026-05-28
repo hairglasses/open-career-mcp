@@ -1,7 +1,8 @@
 # Public Boundary
 
-`open-career-mcp` is a planned synthetic-data career workflow MCP sample. It is
-private staging until the public boundary is proven by tests and scans.
+`open-career-mcp` is a synthetic-data career workflow MCP sample. Its public
+boundary is deliberately narrow: fixtures, examples, tests, and command output
+must remain synthetic, local-first, and dry-run only.
 
 ## Included
 
@@ -22,11 +23,11 @@ private staging until the public boundary is proven by tests and scans.
 
 ## Release Gate
 
-Before public visibility:
+Before each release or major example expansion:
 
 ```bash
 make ci
-gitleaks detect --source . --no-git --redact
+gitleaks detect --source . --redact
 ```
 
-The first public release also needs CI and a full history review.
+The first public release also required CI and a full-history review.

@@ -2,8 +2,9 @@
 
 > Canonical instructions: AGENTS.md
 
-Synthetic-data career workflow MCP sample. This repository is private staging
-until every fixture, example, and commit is safe for public release.
+Synthetic-data career workflow MCP sample. This repository is intended to be
+public-safe: every fixture, example, and commit must preserve the synthetic
+boundary.
 
 ## Public Boundary
 
@@ -17,5 +18,6 @@ until every fixture, example, and commit is safe for public release.
 ## Verification
 
 - Run `make ci` before committing meaningful changes.
-- Run `gitleaks detect --source . --redact` before any visibility change.
+- Run `gitleaks detect --source . --redact` before any tagged release or major
+  public example expansion.
 - Keep README, examples, and fixtures aligned with `PUBLIC_BOUNDARY.md`.

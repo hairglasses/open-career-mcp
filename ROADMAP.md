@@ -1,11 +1,12 @@
 # Roadmap
 
-## Phase 0 - Private Staging
+## Phase 0 - Public Boundary
 
 - Create public-boundary docs. Done.
 - Add synthetic fixture schema. Done.
 - Add gitleaks gate. Done.
-- Keep the GitHub repo private.
+- Publish only after local CI, full-history gitleaks, and manual boundary
+  review pass. Done.
 
 ## Phase 1 - Synthetic CLI
 
@@ -21,8 +22,13 @@
 
 ## Phase 3 - Public Release Review
 
-- Run full secret scan and history review.
-- Add CI and community files. Done for private staging; CI remains manual-only
-  until public release review.
+- Run full secret scan and history review. Done.
+- Add CI and community files. Done.
 - Add one-command local release gate. Done with `make ci`.
-- Switch visibility only after the public boundary is reviewed.
+- Switch visibility only after the public boundary is reviewed. Done.
+
+## Phase 4 - Next Proof Improvements
+
+- Add a small README demo transcript generated from `make smoke`.
+- Add JSON-schema snippets for the MCP-style tool inputs and outputs.
+- Add a tagged public release after CI has passed on the public repository.

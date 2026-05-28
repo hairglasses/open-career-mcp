@@ -1,11 +1,13 @@
 # open-career-mcp
 
+[![ci](https://github.com/hairglasses/open-career-mcp/actions/workflows/ci.yml/badge.svg)](https://github.com/hairglasses/open-career-mcp/actions/workflows/ci.yml)
+
 Synthetic-data career workflow MCP sample for resume tailoring, opportunity
 tracking, and interview preparation.
 
-This repository is private staging for a future open-source portfolio project.
-It is intentionally separate from private career automation systems and should
-only contain public-safe, synthetic fixtures.
+This repository is intentionally separate from private career automation
+systems. It contains only public-safe, synthetic fixtures and local dry-run
+examples.
 
 ## What Works Now
 
@@ -14,6 +16,13 @@ only contain public-safe, synthetic fixtures.
 - Generate interview prep packets from fake company and role data.
 - Expose the workflow through small CLI and MCP-style tool examples.
 - Demonstrate dry-run approval boundaries without live account connectors.
+
+## Why It Exists
+
+`open-career-mcp` is a compact reference implementation for career-workflow
+automation patterns that are safe to inspect publicly: fixture validation,
+dry-run planning, MCP-style manifests, in-process tool calls, and explicit
+connector boundaries.
 
 ## Usage
 
@@ -39,5 +48,5 @@ See [PUBLIC_BOUNDARY.md](PUBLIC_BOUNDARY.md) before adding examples or fixtures.
 
 ```bash
 make ci
-gitleaks detect --source . --no-git --redact
+gitleaks detect --source . --redact
 ```

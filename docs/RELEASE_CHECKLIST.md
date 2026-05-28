@@ -1,6 +1,7 @@
 # Release Checklist
 
-`open-career-mcp` stays private until this checklist is complete.
+Use this checklist before visibility changes, tagged releases, or major example
+expansions.
 
 ## Local Gates
 
@@ -20,25 +21,24 @@ checks, gitleaks when available, and actionlint when available.
 - Confirm docs describe excluded connectors without adding implementation hooks
   for Gmail, LinkedIn, Simplify, calendar, browser automation, OAuth, or cookies.
 - Review full Git history with gitleaks before changing visibility.
-- Enable push and pull request CI triggers before public release.
+- Keep push, pull request, and manual CI triggers enabled.
 
 ## GitHub Visibility
 
-The repository is currently private. Do not switch to public until the local
-gates, full-history scan, and manual public-boundary review all pass.
+The repository may be public only when local gates, full-history scan, CI, and
+manual public-boundary review all pass.
 
 ## Latest Verification Snapshot
 
-Checked on 2026-05-27 16:08 PDT:
+Checked on 2026-05-27 20:29 PDT:
 
-- Local `make ci`: passed at
-  `aa3b5249f57feeeb42349c0af0c938c12fadb1b1`.
-- Full-history `gitleaks detect --source . --redact`: passed, scanning 4
-  commits with no leaks found.
-- GitHub Actions manual CI run `26543644707`: completed successfully for
-  `aa3b5249f57feeeb42349c0af0c938c12fadb1b1`.
-- GitHub visibility: still private.
-
-User decision for this closeout: keep `hairglasses/open-career-mcp` private.
-Do not add it to public profile copy or Featured links until a later explicit
-publication approval.
+- Local `make ci`: passed from this release-prep working tree.
+- Full-history `gitleaks detect --source . --redact`: passed, scanning the
+  complete 5-commit local Git history with no leaks found.
+- Boundary scan from `scripts/check-public-boundary.sh`: passed.
+- Fixture review: every committed fixture is synthetic and marked with
+  `synthetic: true`.
+- Output review: smoke output contains no account names, emails, local paths,
+  real companies, recruiter messages, tenant data, or application records.
+- GitHub visibility: approved to become public after this release-prep commit
+  and CI pass.

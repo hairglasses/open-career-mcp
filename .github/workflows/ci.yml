@@ -1,8 +1,10 @@
 name: ci
 
-# This private staging repo keeps CI manual-only until the release boundary is
-# reviewed. Enable push and pull_request triggers when the repo becomes public.
 on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
   workflow_dispatch:
 
 permissions:
