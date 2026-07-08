@@ -22,6 +22,9 @@ synthetic fixtures
 | `cmd/open-career-mcp` | CLI routing and MCP-style local adapter. |
 | `scripts/check-public-boundary.sh` | Fixture and output boundary checks. |
 
+See `docs/MCP_TOOLS.md` for the exact tool names, descriptions, and required
+parameters exposed through the MCP-style manifest and adapter.
+
 ## Safety Model
 
 - Inputs are committed synthetic fixtures or explicit command parameters.
