@@ -35,6 +35,74 @@ resolves the requested `opportunity_id`, and prints the same JSON a CLI
 subcommand would print. There is no separate network transport in this
 sample — `mcp call` is an in-process adapter so the tool surface can be
 exercised without standing up a server.
+## Tool Schema Specifications
+
+### `open_career_tailor_resume`
+
+#### Input Schema
+```json
+{
+  "type": "object",
+  "required": ["opportunity_id"],
+  "properties": {
+    "opportunity_id": {
+      "type": "string",
+      "description": "Synthetic opportunity identifier (e.g. syn-001)"
+    }
+  }
+}
+```
+
+#### Output Schema
+```json
+{
+  "type": "object",
+  "required": ["opportunity_id", "company", "role", "summary", "matched_skills", "gaps", "bullets", "approval_note"],
+  "properties": {
+    "opportunity_id": { "type": "string" },
+    "company": { "type": "string" },
+    "role": { "type": "string" },
+    "summary": { "type": "string" },
+    "matched_skills": { "type": "array", "items": { "type": "string" } },
+    "gaps": { "type": "array", "items": { "type": "string" } },
+    "bullets": { "type": "array", "items": { "type": "string" } },
+    "approval_note": { "type": "string" }
+  }
+}
+```
+
+### `open_career_interview_prep`
+
+#### Input Schema
+```json
+{
+  "type": "object",
+  "required": ["opportunity_id"],
+  "properties": {
+    "opportunity_id": {
+      "type": "string",
+      "description": "Synthetic opportunity identifier (e.g. syn-001)"
+    }
+  }
+}
+```
+
+#### Output Schema
+```json
+{
+  "type": "object",
+  "required": ["opportunity_id", "company", "role", "talking_points", "questions", "notes"],
+  "properties": {
+    "opportunity_id": { "type": "string" },
+    "company": { "type": "string" },
+    "role": { "type": "string" },
+    "talking_points": { "type": "array", "items": { "type": "string" } },
+    "questions": { "type": "array", "items": { "type": "string" } },
+    "notes": { "type": "string" }
+  }
+}
+```
+
 
 ## Adding A Tool
 

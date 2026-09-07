@@ -50,6 +50,36 @@ go run ./cmd/open-career-mcp mcp manifest
 go run ./cmd/open-career-mcp mcp call open_career_tailor_resume --param opportunity_id=syn-001
 ```
 
+### Demo Transcript
+
+```text
+$ go run ./cmd/open-career-mcp opportunities list
+syn-001 | Northstar Tools | Staff Engineer, Agent Infrastructure | remote | research
+syn-002 | Cedar Analytics | Principal Platform Engineer | hybrid | screen
+
+$ go run ./cmd/open-career-mcp mcp call open_career_tailor_resume --param opportunity_id=syn-001
+{
+  "opportunity_id": "syn-001",
+  "company": "Northstar Tools",
+  "role": "Staff Engineer, Agent Infrastructure",
+  "summary": "Avery Example is a synthetic match for Staff Engineer, Agent Infrastructure because the role emphasizes Distributed systems, Go.",
+  "matched_skills": [
+    "Distributed systems",
+    "Go"
+  ],
+  "gaps": [
+    "Policy and approval gates",
+    "Operational telemetry"
+  ],
+  "bullets": [
+    "Position Avery Example as a Staff platform engineer focused on agent infrastructure for Staff Engineer, Agent Infrastructure using only synthetic portfolio examples.",
+    "Lead with Agent Control Plane and Fleet Baseline Guard when discussing Northstar Tools.",
+    "Keep all outreach, submission, and account-connector steps out of scope for this public sample."
+  ],
+  "approval_note": "Dry run only. This sample never sends messages, submits applications, or touches live accounts."
+}
+```
+
 See [docs/EXAMPLES.md](docs/EXAMPLES.md) for more commands.
 
 ## Not In Scope

@@ -29,6 +29,7 @@
 
 ## Phase 4 - Next Proof Improvements
 
-- Add a small README demo transcript generated from `make smoke`.
-- Add JSON-schema snippets for the MCP-style tool inputs and outputs.
+- Add a small README demo transcript generated from `make smoke`. Done.
+- Add JSON-schema snippets for the MCP-style tool inputs and outputs. Done.
 - Add a tagged public release after CI has passed on the public repository.
+
