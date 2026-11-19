@@ -1,5 +1,9 @@
-# open-career-mcp — Gemini Instructions
+# open-career-mcp — Antigravity Instructions
 
-This repo uses [AGENTS.md](AGENTS.md) as the canonical instruction file. Read it before making changes.
+This repository uses [AGENTS.md](AGENTS.md) as its canonical instruction file. Read it before making changes.
+
+@[AGENTS.md](AGENTS.md)
+
+## Summary
 
 > Canonical instructions: AGENTS.md
