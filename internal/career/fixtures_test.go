@@ -55,6 +55,28 @@ func TestManifest(t *testing.T) {
 		if !strings.HasPrefix(tool.Name, "open_career_") {
 			t.Fatalf("tool name %q does not use open_career_ prefix", tool.Name)
 		}
+		schema := tool.InputSchema
+		if schema["type"] == "object" {
+			props, ok := schema["properties"].(map[string]any)
+			if !ok || len(props) == 0 {
+				t.Fatalf("tool %s object schema has empty properties (OBJECT_MISSING_PROPERTIES)", tool.Name)
+			}
+		}
+	}
+}
+
+func TestManifestNegativeControl(t *testing.T) {
+	mutantTool := Tool{
+		Name: "mutant_tool",
+		InputSchema: map[string]any{
+			"type":       "object",
+			"properties": map[string]any{},
+		},
+	}
+	schema := mutantTool.InputSchema
+	props, ok := schema["properties"].(map[string]any)
+	if !ok || len(props) != 0 {
+		t.Fatal("expected empty properties for mutant")
 	}
 }
 

@@ -13,3 +13,9 @@ func TestRunTailorJSON(t *testing.T) {
 		t.Fatalf("run() error = %v", err)
 	}
 }
+
+func TestRunMCPCallListFilter(t *testing.T) {
+	if err := run([]string{"mcp", "call", "open_career_list_opportunities", "--param", "stage=research", "--fixtures", "../../fixtures"}); err != nil {
+		t.Fatalf("run() error = %v", err)
+	}
+}
