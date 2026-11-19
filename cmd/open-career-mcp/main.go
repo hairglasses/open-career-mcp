@@ -1,11 +1,14 @@
 package main
 
 import (
+	"bufio"
 	"encoding/json"
 	"errors"
 	"flag"
 	"fmt"
+	"io"
 	"os"
+	"path/filepath"
 	"strings"
 
 	"github.com/hairglasses/open-career-mcp/internal/career"
@@ -20,7 +23,7 @@ func main() {
 
 func run(args []string) error {
 	if len(args) == 0 {
-		return usage()
+		return serveStdio(os.Stdin, os.Stdout, resolveFixtureDir("fixtures"))
 	}
 
 	switch args[0] {
@@ -32,11 +35,34 @@ func run(args []string) error {
 		return interview(args[1:])
 	case "mcp":
 		return mcp(args[1:])
+	case "serve", "stdio":
+		return mcpServe(args[1:])
 	case "help", "-h", "--help":
 		return usage()
 	default:
 		return fmt.Errorf("unknown command %q\n\n%w", args[0], usage())
 	}
+}
+
+func resolveFixtureDir(requested string) string {
+	if requested != "" && requested != "fixtures" {
+		return requested
+	}
+	candidates := []string{
+		os.Getenv("OPEN_CAREER_FIXTURES"),
+		"fixtures",
+		filepath.Join("..", "..", "fixtures"),
+		filepath.Join("open-career-mcp", "fixtures"),
+	}
+	for _, candidate := range candidates {
+		if candidate == "" {
+			continue
+		}
+		if info, err := os.Stat(candidate); err == nil && info.IsDir() {
+			return candidate
+		}
+	}
+	return "fixtures"
 }
 
 func opportunities(args []string) error {
@@ -49,7 +75,7 @@ func opportunities(args []string) error {
 	if err := fs.Parse(args[1:]); err != nil {
 		return err
 	}
-	_, opportunities, err := career.LoadFixtures(*fixtureDir)
+	_, opportunities, err := career.LoadFixtures(resolveFixtureDir(*fixtureDir))
 	if err != nil {
 		return err
 	}
@@ -76,7 +102,7 @@ func resume(args []string) error {
 	if *opportunityID == "" {
 		return errors.New("--opportunity is required")
 	}
-	resume, opportunities, err := career.LoadFixtures(*fixtureDir)
+	resume, opportunities, err := career.LoadFixtures(resolveFixtureDir(*fixtureDir))
 	if err != nil {
 		return err
 	}
@@ -110,7 +136,7 @@ func interview(args []string) error {
 	if *opportunityID == "" {
 		return errors.New("--opportunity is required")
 	}
-	resume, opportunities, err := career.LoadFixtures(*fixtureDir)
+	resume, opportunities, err := career.LoadFixtures(resolveFixtureDir(*fixtureDir))
 	if err != nil {
 		return err
 	}
@@ -137,16 +163,27 @@ func interview(args []string) error {
 
 func mcp(args []string) error {
 	if len(args) == 0 {
-		return errors.New("usage: open-career-mcp mcp manifest|call")
+		return errors.New("usage: open-career-mcp mcp manifest|call|serve")
 	}
 	switch args[0] {
 	case "manifest":
 		return printJSON(career.Manifest())
 	case "call":
 		return mcpCall(args[1:])
+	case "serve", "stdio":
+		return mcpServe(args[1:])
 	default:
 		return fmt.Errorf("unknown mcp command %q", args[0])
 	}
+}
+
+func mcpServe(args []string) error {
+	fs := flag.NewFlagSet("mcp serve", flag.ContinueOnError)
+	fixtureDir := fs.String("fixtures", "fixtures", "fixture directory")
+	if err := fs.Parse(args); err != nil {
+		return err
+	}
+	return serveStdio(os.Stdin, os.Stdout, resolveFixtureDir(*fixtureDir))
 }
 
 func mcpCall(args []string) error {
@@ -161,38 +198,221 @@ func mcpCall(args []string) error {
 	if err := fs.Parse(args[1:]); err != nil {
 		return err
 	}
-	resume, opportunities, err := career.LoadFixtures(*fixtureDir)
+	result, err := executeTool(resolveFixtureDir(*fixtureDir), tool, map[string]string{
+		"stage":          params.Get("stage"),
+		"opportunity_id": params.Get("opportunity_id"),
+	})
 	if err != nil {
 		return err
 	}
+	return printJSON(result)
+}
+
+func executeTool(fixtureDir, tool string, args map[string]string) (any, error) {
+	resumeData, opportunitiesData, err := career.LoadFixtures(fixtureDir)
+	if err != nil {
+		return nil, err
+	}
 	switch tool {
 	case "open_career_list_opportunities":
-		stage := params.Get("stage")
+		stage := args["stage"]
 		if stage != "" {
 			var filtered []career.Opportunity
-			for _, opp := range opportunities {
+			for _, opp := range opportunitiesData {
 				if strings.EqualFold(opp.Stage, stage) {
 					filtered = append(filtered, opp)
 				}
 			}
-			return printJSON(filtered)
+			return filtered, nil
 		}
-		return printJSON(opportunities)
+		return opportunitiesData, nil
 	case "open_career_tailor_resume":
-		opportunity, err := career.FindOpportunity(opportunities, params.Get("opportunity_id"))
+		opportunity, err := career.FindOpportunity(opportunitiesData, args["opportunity_id"])
 		if err != nil {
-			return err
+			return nil, err
 		}
-		return printJSON(career.BuildTailoringPlan(resume, opportunity))
+		return career.BuildTailoringPlan(resumeData, opportunity), nil
 	case "open_career_interview_prep":
-		opportunity, err := career.FindOpportunity(opportunities, params.Get("opportunity_id"))
+		opportunity, err := career.FindOpportunity(opportunitiesData, args["opportunity_id"])
 		if err != nil {
-			return err
+			return nil, err
 		}
-		return printJSON(career.BuildInterviewPacket(resume, opportunity))
+		return career.BuildInterviewPacket(resumeData, opportunity), nil
 	default:
-		return fmt.Errorf("unknown MCP-style tool %q", tool)
+		return nil, fmt.Errorf("unknown MCP-style tool %q", tool)
 	}
+}
+
+type jsonrpcError struct {
+	Code    int    `json:"code"`
+	Message string `json:"message"`
+}
+
+type jsonrpcResponse struct {
+	JSONRPC string          `json:"jsonrpc"`
+	ID      json.RawMessage `json:"id"`
+	Result  any             `json:"result,omitempty"`
+	Error   *jsonrpcError   `json:"error,omitempty"`
+}
+
+func normalizeJSONRPCID(raw json.RawMessage) json.RawMessage {
+	trimmed := strings.TrimSpace(string(raw))
+	if trimmed == "" {
+		return json.RawMessage("null")
+	}
+	return json.RawMessage(trimmed)
+}
+
+func writeJSONRPCResponse(out io.Writer, resp jsonrpcResponse) error {
+	resp.JSONRPC = "2.0"
+	resp.ID = normalizeJSONRPCID(resp.ID)
+	payload, err := json.Marshal(resp)
+	if err != nil {
+		return err
+	}
+	_, err = fmt.Fprintf(out, "%s\n", payload)
+	return err
+}
+
+func serveStdio(in io.Reader, out io.Writer, fixtureDir string) error {
+	scanner := bufio.NewScanner(in)
+	scanner.Buffer(make([]byte, 64*1024), 4*1024*1024)
+	for scanner.Scan() {
+		line := strings.TrimSpace(scanner.Text())
+		if line == "" {
+			continue
+		}
+		var raw map[string]json.RawMessage
+		if err := json.Unmarshal([]byte(line), &raw); err != nil {
+			if writeErr := writeJSONRPCResponse(out, jsonrpcResponse{
+				ID:    json.RawMessage("null"),
+				Error: &jsonrpcError{Code: -32700, Message: "Parse error"},
+			}); writeErr != nil {
+				return writeErr
+			}
+			continue
+		}
+		rawID, hasID := raw["id"]
+		var method string
+		if rawMethod, ok := raw["method"]; ok {
+			_ = json.Unmarshal(rawMethod, &method)
+		}
+		if !hasID {
+			continue
+		}
+		if method == "" {
+			if err := writeJSONRPCResponse(out, jsonrpcResponse{
+				ID:    rawID,
+				Error: &jsonrpcError{Code: -32600, Message: "Invalid Request"},
+			}); err != nil {
+				return err
+			}
+			continue
+		}
+		switch method {
+		case "initialize":
+			if err := writeJSONRPCResponse(out, jsonrpcResponse{
+				ID: rawID,
+				Result: map[string]any{
+					"protocolVersion": "2025-06-18",
+					"capabilities": map[string]any{
+						"tools": map[string]any{},
+					},
+					"serverInfo": map[string]any{
+						"name":    "open-career-mcp",
+						"version": "0.1.0",
+					},
+				},
+			}); err != nil {
+				return err
+			}
+		case "ping":
+			if err := writeJSONRPCResponse(out, jsonrpcResponse{
+				ID:     rawID,
+				Result: map[string]any{},
+			}); err != nil {
+				return err
+			}
+		case "tools/list":
+			manifest := career.Manifest()
+			tools := make([]map[string]any, 0, len(manifest.Tools))
+			for _, tool := range manifest.Tools {
+				tools = append(tools, map[string]any{
+					"name":        tool.Name,
+					"description": tool.Description,
+					"inputSchema": tool.InputSchema,
+				})
+			}
+			if err := writeJSONRPCResponse(out, jsonrpcResponse{
+				ID: rawID,
+				Result: map[string]any{
+					"tools": tools,
+				},
+			}); err != nil {
+				return err
+			}
+		case "tools/call":
+			var callParams struct {
+				Name      string         `json:"name"`
+				Arguments map[string]any `json:"arguments"`
+			}
+			if rawParams, ok := raw["params"]; ok && len(rawParams) > 0 {
+				if err := json.Unmarshal(rawParams, &callParams); err != nil {
+					if writeErr := writeJSONRPCResponse(out, jsonrpcResponse{
+						ID:    rawID,
+						Error: &jsonrpcError{Code: -32602, Message: "Invalid params"},
+					}); writeErr != nil {
+						return writeErr
+					}
+					continue
+				}
+			}
+			strArgs := map[string]string{}
+			for k, v := range callParams.Arguments {
+				if s, ok := v.(string); ok {
+					strArgs[k] = s
+				}
+			}
+			result, err := executeTool(fixtureDir, callParams.Name, strArgs)
+			if err != nil {
+				if writeErr := writeJSONRPCResponse(out, jsonrpcResponse{
+					ID: rawID,
+					Result: map[string]any{
+						"content": []map[string]any{
+							{"type": "text", "text": err.Error()},
+						},
+						"isError": true,
+					},
+				}); writeErr != nil {
+					return writeErr
+				}
+				continue
+			}
+			encoded, err := json.MarshalIndent(result, "", "  ")
+			if err != nil {
+				return err
+			}
+			if err := writeJSONRPCResponse(out, jsonrpcResponse{
+				ID: rawID,
+				Result: map[string]any{
+					"content": []map[string]any{
+						{"type": "text", "text": string(encoded)},
+					},
+					"isError": false,
+				},
+			}); err != nil {
+				return err
+			}
+		default:
+			if err := writeJSONRPCResponse(out, jsonrpcResponse{
+				ID:    rawID,
+				Error: &jsonrpcError{Code: -32601, Message: fmt.Sprintf("Method not found: %s", method)},
+			}); err != nil {
+				return err
+			}
+		}
+	}
+	return scanner.Err()
 }
 
 func usage() error {
@@ -201,7 +421,8 @@ func usage() error {
   open-career-mcp resume tailor --opportunity syn-001 [--json]
   open-career-mcp interview prep --opportunity syn-001 [--json]
   open-career-mcp mcp manifest
-  open-career-mcp mcp call <tool> --param opportunity_id=syn-001`)
+  open-career-mcp mcp call <tool> --param opportunity_id=syn-001
+  open-career-mcp mcp serve [--fixtures fixtures]`)
 }
 
 func printJSON(value any) error {
