@@ -1,9 +1,8 @@
-# open-career-mcp — Claude Code Instructions
+# open-career-mcp — Claude Code Compatibility Instructions
 
-This repo uses [AGENTS.md](AGENTS.md) as the canonical instruction file. Read it before making changes.
+This repository uses [AGENTS.md](AGENTS.md) as its canonical instruction file. Read it before making changes.
 
 @AGENTS.md
-@../docs/fleet/canonical/CLAUDE.md
 
 <!-- BEGIN GENERATED LANDING POLICY -->
 Use `hg-land --repo <checkout>` (`--no-verify` while the fleet gate switch

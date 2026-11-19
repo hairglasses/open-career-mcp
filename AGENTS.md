@@ -22,6 +22,10 @@ boundary.
   public example expansion.
 - Keep README, examples, and fixtures aligned with `PUBLIC_BOUNDARY.md`.
 
+## Landing
+
+- Land verified changes via `branch -> PR -> claude-harness/bin/hg-land --repo <checkout>` (never `git push origin main` directly; never use `git add -A`).
+
 <!-- BEGIN GENERATED LANDING POLICY -->
 Use `hg-land --repo <checkout>` (`--no-verify` while the fleet gate switch
 `~/.config/hg/gates-disabled` or `HG_GATES_DISABLED=1` is active; `--local-gate <log>`
