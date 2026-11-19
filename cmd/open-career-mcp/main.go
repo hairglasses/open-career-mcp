@@ -167,6 +167,16 @@ func mcpCall(args []string) error {
 	}
 	switch tool {
 	case "open_career_list_opportunities":
+		stage := params.Get("stage")
+		if stage != "" {
+			var filtered []career.Opportunity
+			for _, opp := range opportunities {
+				if strings.EqualFold(opp.Stage, stage) {
+					filtered = append(filtered, opp)
+				}
+			}
+			return printJSON(filtered)
+		}
 		return printJSON(opportunities)
 	case "open_career_tailor_resume":
 		opportunity, err := career.FindOpportunity(opportunities, params.Get("opportunity_id"))

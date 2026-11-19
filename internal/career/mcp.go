@@ -6,8 +6,13 @@ func Manifest() ToolManifest {
 			Name:        "open_career_list_opportunities",
 			Description: "List synthetic career opportunities from local fixtures.",
 			InputSchema: map[string]any{
-				"type":       "object",
-				"properties": map[string]any{},
+				"type": "object",
+				"properties": map[string]any{
+					"stage": map[string]any{
+						"type":        "string",
+						"description": "Optional filter by application stage.",
+					},
+				},
 			},
 		},
 		{
